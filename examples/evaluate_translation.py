@@ -6,9 +6,10 @@ from openai import OpenAI
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
+
 def evaluate_translation(original: str, translated: str) -> dict:
-  """翻訳品質の自動評価"""
-  evaluation_prompt = f"""
+    """翻訳品質の自動評価"""
+    evaluation_prompt = f"""
   以下の翻訳を5段階（1:低品質 〜 5:高品質）で評価し、JSON形式で結果を返してください
   
   評価項目:
@@ -29,17 +30,19 @@ def evaluate_translation(original: str, translated: str) -> dict:
   }}
   """
 
-  try:
-    response = client.chat.completions.create(
-    model="gpt-4.1-nano",
-    messages=[{"role": "user", "content": evaluation_prompt}],
-    temperature=0
-  )
-    
-    import json
-    return json.loads(response.choices[0].message.content)
-  except Exception as e:
-    return {"error": f"評価エラー: {str(e)}"}
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4.1-nano",
+            messages=[{"role": "user", "content": evaluation_prompt}],
+            temperature=0,
+        )
+
+        import json
+
+        return json.loads(response.choices[0].message.content)
+    except Exception as e:
+        return {"error": f"評価エラー: {str(e)}"}
+
 
 # 使用例
 original = "The system requires immediate attention."
