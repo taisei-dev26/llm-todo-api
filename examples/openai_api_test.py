@@ -6,18 +6,21 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # OpenAIクライアントを初期化
-client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 try:
-  # シンプルなテスト用プロンプト
-  response = client.chat.completions.create(
-    model="gpt-5-nano",
-    messages=[
-      {"role": "user", "content": "あなたは久保晴香ですか？それとも、本橋ですか？"}
-    ]
-  )
+    # シンプルなテスト用プロンプト
+    response = client.chat.completions.create(
+        model="gpt-5-nano",
+        messages=[
+            {
+                "role": "user",
+                "content": "あなたは久保晴香ですか？それとも、本橋ですか？",
+            }
+        ],
+    )
 
-  print("API接続成功")
-  print(f"レスポンス: {response.choices[0].message.content}")
+    print("API接続成功")
+    print(f"レスポンス: {response.choices[0].message.content}")
 except Exception as e:
-  print(f"API接続エラー: {str(e)}")
+    print(f"API接続エラー: {str(e)}")
