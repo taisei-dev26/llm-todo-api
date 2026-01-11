@@ -6,9 +6,10 @@ from openai import OpenAI
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
+
 def contextual_translate(text, context=""):
-  """ 文脈を考慮した翻訳関数"""
-  prompt = f"""
+    """文脈を考慮した翻訳関数"""
+    prompt = f"""
   以下の文章を日本語へ翻訳してください
 
   文脈情報: {context}
@@ -19,12 +20,13 @@ def contextual_translate(text, context=""):
   - 専門用語は適切に扱う
   """
 
-  response = client.chat.completions.create(
-    model="gpt-4.1-nano",
-    messages=[{"role": "user", "content": prompt}],
-    temperature=0.2
-  )
-  return response.choices[0].message.content
+    response = client.chat.completions.create(
+        model="gpt-4.1-nano",
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.2,
+    )
+    return response.choices[0].message.content
+
 
 # 使用例
 text = "Before starting the maintenance work, please disconnect the power supply, check that all moving parts have come to a complete stop, and make sure the surrounding area is free from obstacles. Always wear protective gloves and safety goggles, as unexpected sparks or sharp edges may cause injury."
