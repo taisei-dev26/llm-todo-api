@@ -1,41 +1,43 @@
 import tiktoken
 import re
 
+
 def split_text(text, model="gpt-5-nano", max_completion_tokens=3000):
-  """テキストをトークン数に応じて段階・文単位で分割"""
-  # モデルに対応するエンコーディングを取得
-  try:
-    encoding = tiktoken.encoding_for_model(model)
-  except KeyError:
-    encoding = tiktoken.get_encoding("cl100k_base")
-  
-  count_tokens = lambda s: len(encoding.encode(s))
-  chunks = []
+    """テキストをトークン数に応じて段階・文単位で分割"""
+    # モデルに対応するエンコーディングを取得
+    try:
+        encoding = tiktoken.encoding_for_model(model)
+    except KeyError:
+        encoding = tiktoken.get_encoding("cl100k_base")
 
-  for paragraph in text.split("\n\n"):
-    paragraph = paragraph.strip()
-    if not paragraph:
-        continue
+    count_tokens = lambda s: len(encoding.encode(s))
+    chunks = []
 
-    # 段落が長すぎる場合は文単位で分割
-    if count_tokens(paragraph) > max_completion_tokens:
-        sentences = re.split(r'(?<=[。！？.!?])\s*', paragraph)
-        current = ""
-        for sentence in sentences:
-            if not sentence.strip():
-                continue
-            if count_tokens(current + sentence) > max_completion_tokens:
-                if current:
-                    chunks.append(current.strip())
-                    current = sentence
-            else:
-                current += sentence
-        if current:
-            chunks.append(current.strip())
-    else:
-        chunks.append(paragraph)
+    for paragraph in text.split("\n\n"):
+        paragraph = paragraph.strip()
+        if not paragraph:
+            continue
 
-  return chunks
+        # 段落が長すぎる場合は文単位で分割
+        if count_tokens(paragraph) > max_completion_tokens:
+            sentences = re.split(r"(?<=[。！？.!?])\s*", paragraph)
+            current = ""
+            for sentence in sentences:
+                if not sentence.strip():
+                    continue
+                if count_tokens(current + sentence) > max_completion_tokens:
+                    if current:
+                        chunks.append(current.strip())
+                        current = sentence
+                else:
+                    current += sentence
+            if current:
+                chunks.append(current.strip())
+        else:
+            chunks.append(paragraph)
+
+    return chunks
+
 
 # テスト用サンプル
 if __name__ == "__main__":
