@@ -1,13 +1,15 @@
-from dotenv import load_dotenv
 import os
+
+from dotenv import load_dotenv
 from openai import OpenAI
 
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
+
 def build_explanation_prompt(user_role, user_level="biginner", language="js"):
-  """対象者・理解度・言語に応じた説明プロンプトを生成"""
-  template = f"""
+    """対象者・理解度・言語に応じた説明プロンプトを生成"""
+    template = """
 あなたは教育の専門家です。
 
 次の内容を{language}で300文字以内で説明してください。
@@ -24,8 +26,29 @@ def build_explanation_prompt(user_role, user_level="biginner", language="js"):
 - 上級者には専門的な背景知識や用語を踏まえる
 """
 
-  role ="営業担当者" if user_role == "sales" else "エンジニア"
-  level = "初心者" if user_level == "beginner" else "上級者"
-  lang = "日本語" if language == "ja" else "English"
+    role = "営業担当者" if user_role == "sales" else "エンジニア"
+    level = "初心者" if user_level == "beginner" else "上級者"
+    lang = "日本語" if language == "ja" else "English"
 
-  return template.format(language=lang, role=role, level=level, topic="機械学習の基礎")
+    return template.format(
+        language=lang, role=role, level=level, topic="機械学習の基礎"
+    )
+
+
+def run_example(user_role, user_level, language):
+    """プロンプトを生成し、モデルに投げて結果を表示"""
+    prompt = build_explanation_prompt(user_role, user_level, language)
+    response = client.chat.completions.create(
+        model="gpt-5-nano",
+        messages=[{"role": "user", "content": prompt}],
+    )
+
+    print("=== プロンプト ===")
+    print(prompt)
+    print("=== 出力結果 ===")
+    print(response.choices[0].message.content.strip())
+
+
+# パターン1: 営業担当者向け・初心者・日本語
+run_example(user_role="sales", user_level="biginner", language="ja")
+run_example(user_role="engineer", user_level="advanced", language="en")
