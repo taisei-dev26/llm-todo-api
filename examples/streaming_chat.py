@@ -1,4 +1,3 @@
-from email import message
 import os
 import time
 from openai import OpenAI
